@@ -1,0 +1,32 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String  @id @default(uuid())
+  email       String? @unique
+  googleId    String? @unique
+  microsoftId String? @unique
+  resumes     Resume[]
+  createdAt   DateTime @default(now())
+
+  @@unique([email, googleId, microsoftId])
+}
+
+model Resume {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title      String
+  experience String?
+  projects   String?
+  skills     String?
+  education  String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
